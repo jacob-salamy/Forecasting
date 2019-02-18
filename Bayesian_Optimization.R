@@ -32,7 +32,7 @@ holdout[, t := .GRP, by = Store]
 features <- c(lag_list, names(date_features))
 input <- na.omit(input[Date < start, c(features, 'Sales'), with = F])
 h2o.init()
-input <- as.h2o(input)
+input <- as.h2o(data.matrix(input))
 id <- h2o.ls() 
 
 # Set up a Random Forest bayesian optimization function for the # of rows sampled 
