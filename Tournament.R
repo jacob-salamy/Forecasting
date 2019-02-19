@@ -13,8 +13,8 @@ input <- input[order(Store, Date)]
 input[, Sales := ts(Sales), by = Store]
 
 # Define forecast horizon and validation window
-forecast <- 30
-validation <- 30
+forecast <- 28
+validation <- 14
 start <- max(input$Date) - validation - forecast
 
 # Define different models 
@@ -28,13 +28,13 @@ models <- list(
 Tournament <- function(input, models){
   Score <- vector('list', length = length(models))
   for (i in seq_along(models)){
-  Score[[i]] <- sum(abs(input$Sales[input$Date > start] - models[[i]](data = input$Sales[input$Date < start],
-                                                                      period = validation)))
+  Score[[i]] <- sum(abs(input$Sales[input$Date >= start & input$Date < start + validation] - 
+                          models[[i]](data = input$Sales[input$Date < start], period = validation)))
   }
   Score <- unlist(Score) %>% t(.)
   names(Score) <- names(models)
   Winner <- names(Score)[Score[1,] == min(Score[1,])]
-  Forecast <- models[[Winner]](data = input$Sales[input$Date < start + validation],
+  Forecast <- models[[Winner]](data = input$Sales[input$Date <= start + validation],
                                period = forecast) %>% as.data.frame(.)
   Forecast$Model <- Winner
   return(Forecast)
