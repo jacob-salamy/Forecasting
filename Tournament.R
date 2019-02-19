@@ -15,7 +15,7 @@ input[, Sales := ts(Sales), by = Store]
 # Define forecast horizon and validation window
 forecast <- 30
 validation <- 30
-start <- max(input$Date) - validation
+start <- max(input$Date) - validation - forecast
 
 # Define different models 
 models <- list(
