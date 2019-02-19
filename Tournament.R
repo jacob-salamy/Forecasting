@@ -6,7 +6,6 @@ library(parallel)
 
 input <- fread("~/Desktop/Forecasting/rossmann-store-sales/train.csv")
 input <- input[, c(1,3,4)]
-input <- input[Store %in% unique(Store)[1:5],]
 
 # Format data
 input[, Date := as.Date(Date)]
