@@ -1,4 +1,4 @@
-# Bayesian Optimization of a Random Forest forecast using the Rossmann Kaggle Dataset #
+# Bayesian Optimization of a Random Forest forecast using Rossmann data #
 library(rBayesianOptimization)
 library(h2o)
 library(data.table)
