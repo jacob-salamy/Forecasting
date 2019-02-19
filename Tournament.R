@@ -1,4 +1,4 @@
-# Tournament for rossmann Data #
+# Tournament for Rossmann data #
 
 library(forecast)
 library(data.table)
