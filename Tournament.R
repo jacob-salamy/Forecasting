@@ -4,7 +4,7 @@ library(forecast)
 library(data.table)
 library(parallel)
 
-input <- fread("C:/Users/jsalamy/Desktop/R&D/GitHub/Forecasting/Rossman/train.csv")
+input <- fread("~/train.csv")
 input <- input[, c(1,3,4)]
 
 # Format data
