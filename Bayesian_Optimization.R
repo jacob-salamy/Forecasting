@@ -1,4 +1,5 @@
 # Bayesian Optimization of a Random Forest forecast using Rossmann data #
+{
 library(rBayesianOptimization)
 library(h2o)
 library(data.table)
@@ -83,4 +84,4 @@ Result <- list(mtry = as.integer((Result[1]/9)*(length(features)-1)),
 
 Result
 
-
+}
