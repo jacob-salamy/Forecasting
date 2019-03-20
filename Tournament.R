@@ -3,9 +3,11 @@
   options(scipen = 999)
   xfun::pkg_attach2(c('forecast','data.table','parallel'))
 
+  # Import and subset the data to 50 stores for demonstration purposes
+  
   input <- fread("~/Tournament/train.csv")
   input <- input[, c(1,3,4)]
-  input <- input[Store %in% unique(Store)[1:11]]
+  input <- input[Store %in% unique(Store)[1:50]]
   
   # Format data
   
