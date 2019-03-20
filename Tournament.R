@@ -5,6 +5,7 @@
 
   input <- fread("~/Tournament/train.csv")
   input <- input[, c(1,3,4)]
+  input <- input[Store %in% unique(Store)[1:11]]
   
   # Format data
   
@@ -56,7 +57,8 @@
     
     for (model in seq_along(models)){
       Winner[[model]] <- sum(abs(.subset(input)[['Sales']][valid_start:(valid_start + validation - 1)] - 
-                                   models[[model]](data = .subset(input)[['Sales']][1:(valid_start - 1)], period = validation)))
+                                   models[[model]](data = .subset(input)[['Sales']][1:(valid_start - 1)],
+                                   period = validation)))
     }
     
     Winner <- unlist(Winner)
@@ -78,7 +80,7 @@
     Method <- as.character(Forecast[['method']])
     Forecast <- as.data.frame(as.vector(Forecast[['mean']]))
     Forecast[Forecast < 1] <- 1
-    Forecast[['method']] <- Method
+    Forecast[['Method']] <- Method
     return(Forecast)
   }
   
@@ -86,7 +88,8 @@
   
   cl <- makeCluster(detectCores() - 1)
   clusterExport(cl, varlist = list('valid_start','valid_end','validation','forecast_period','models', # forecasting inputs
-                                   'Tournament','forecast','%>%', 'auto.arima','ses','dshw','tbats' # forecasting functions
+                                   'Tournament','forecast','auto.arima','ses','dshw','tbats', # forecasting functions
+                                   '%>%' # misc. functions
   ), env = environment())
   system.time(input <- split(input, input[['Store']]) %>% parLapply(cl, ., Tournament, models) %>% rbindlist(.))
   stopCluster(cl)
@@ -94,7 +97,7 @@
   # Finalize forecast results
   
   names(input)[1] <- 'Forecast'
-  input[['Forecast']] <- input[['Forecast']] - 1
+  setDT(input)[, Forecast := Forecast - 1]
   input[['Date']] <- Date
   input[['Store']] <- Store
 }
