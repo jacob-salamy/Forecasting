@@ -1,11 +1,9 @@
 # Bayesian Optimization of a Random Forest forecast using Rossmann data #
-{
-library(rBayesianOptimization)
-library(h2o)
-library(data.table)
-
-input <- fread("~/Desktop/Forecasting/rossmann-store-sales/train.csv")
-
+{ 
+options(scipen = 999)
+xfun::pkg_attach2(c('rBayesianOptimization','h2o','data.table'))
+  
+input <- fread("~/train.csv")
 input[, Date := as.Date(Date)]
 input <- input[order(Store, Date)]
 
