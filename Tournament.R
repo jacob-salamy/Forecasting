@@ -102,4 +102,9 @@
   setDT(input)[, Forecast := Forecast - 1]
   input[['Date']] <- Date
   input[['Store']] <- Store
+  
+   # Remove everything but the input data.table and run garbage collection
+  
+  rm(list = ls()[!ls() %in% 'input'])
+  gc()
 }
