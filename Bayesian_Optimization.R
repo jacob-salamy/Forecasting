@@ -30,6 +30,8 @@ holdout[, t := .GRP, by = Store]
 # Format the input
 features <- c(lag_list, names(date_features))
 input <- na.omit(input[Date < start, c(features, 'Sales'), with = F])
+  
+# Start h2o
 h2o.init()
 input <- as.h2o(data.matrix(input))
 id <- h2o.ls() 
@@ -57,16 +59,15 @@ rf_bayesopt <- function(mtry, node.size){
     holdout[[i]]$RF <- as.vector(h2o.predict(model, as.h2o(data.matrix(holdout[[i]]))))
   }
   
-  holdout <- rbindlist(holdout)
-  
-  # Get the simple sum of absolute errors over the holdout sample
-  Score <- sum(abs(holdout$Sales - holdout$RF))
-  
   # Remove h2o cluster data
   model <- h2o.ls()
   removal <- as.character(model$key[!model$key %in% id$key])
   h2o.rm(removal)
   gc(gc())
+  
+  # Get the simple sum of absolute errors over the holdout sample
+  holdout <- rbindlist(holdout)
+  Score <- sum(abs(holdout$Sales - holdout$RF))
   
   # Return the score for the function to optimize
   list(Score = -1*log(Score), Pred = 1) }
