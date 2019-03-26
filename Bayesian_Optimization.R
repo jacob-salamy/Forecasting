@@ -82,7 +82,6 @@ Bayes_Opt_Result <- list(mtry = as.integer((Result[1]/9)*(length(features)-1)),
                   node.size = as.integer(3 + Result[2]*3))
 
 # Remove everything in the global environment except for the result
-
 rm(list = ls()[!ls() %in% 'Bayes_Opt_Result'])
 gc()
 }
