@@ -32,7 +32,8 @@
                          data.table(Date = seq.Date(from = min(Date), 
                                                     to = valid_end, 
                                                     by = 'day')),
-                         by = "Date", all = T), by = Store]
+                         by = "Date", all = T),
+                 by = Store]
   
   input[is.na(input)] <- 1
   
