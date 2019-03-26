@@ -1,11 +1,12 @@
 # Bayesian Optimization of a Random Forest forecast using Rossmann data #
 { 
 options(scipen = 999)
-xfun::pkg_attach2(c('rBayesianOptimization','h2o','data.table'))
-  
+xfun::pkg_attach2(c('rBayesianOptimization','h2o','data.table','lubridate'))
+ 
+#Import and format data
 input <- fread("~/train.csv")
-input[, Date := as.Date(Date)]
-input <- input[order(Store, Date)]
+input[, Date := ymd(Date)]
+setorder(input, Store, Date)
 
 # Create a month's worth of lags
 lags <- c(1:30)
@@ -29,9 +30,7 @@ holdout[, t := .GRP, by = Store]
 
 # Format the input
 features <- c(lag_list, names(date_features))
-input <- na.omit(input[Date < start, c(features, 'Sales'), with = F])
-  
-# Start h2o
+input <- na.omit(input[Date < max(Date) - 60, c('Sales', features), with = F])
 h2o.init()
 input <- as.h2o(data.matrix(input))
 id <- h2o.ls() 
@@ -59,28 +58,31 @@ rf_bayesopt <- function(mtry, node.size){
     holdout[[i]]$RF <- as.vector(h2o.predict(model, as.h2o(data.matrix(holdout[[i]]))))
   }
   
+  holdout <- rbindlist(holdout)
+  
+  # Get the simple sum of absolute errors over the holdout sample
+  Score <- sum(abs(holdout$Sales - holdout$RF))
+  
   # Remove h2o cluster data
   model <- h2o.ls()
   removal <- as.character(model$key[!model$key %in% id$key])
   h2o.rm(removal)
   gc(gc())
   
-  # Get the simple sum of absolute errors over the holdout sample
-  holdout <- rbindlist(holdout)
-  Score <- sum(abs(holdout$Sales - holdout$RF))
-  
   # Return the score for the function to optimize
   list(Score = -1*log(Score), Pred = 1) }
 
 # Run the optimization and return the best parameters
-Result <- BayesianOptimization(rf_bayesopt, 
+Bayes_Opt_Result <- BayesianOptimization(rf_bayesopt, 
                                bounds = list(mtry = c(3L,9L), node.size = c(0L,8L)),
                                init_grid_dt = NULL, init_points = 10, n_iter = 10,
                                acq = "ucb", verbose = TRUE)$Best_Par
 
-Result <- list(mtry = as.integer((Result[1]/9)*(length(features)-1)),
+Bayes_Opt_Result <- list(mtry = as.integer((Result[1]/9)*(length(features)-1)),
                   node.size = as.integer(3 + Result[2]*3))
 
-Result
+# Remove everything in the global environment except for the result
 
+rm(list = ls()[!ls() %in% 'Bayes_Opt_Result'])
+gc()
 }
