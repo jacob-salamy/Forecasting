@@ -4,20 +4,17 @@
   #devtools::install_github("twitter/AnomalyDetection")
   xfun::pkg_attach2(c('forecast','data.table','parallel','AnomalyDetection'))
   
-  # Import and subset the data to 50 stores for demonstration purposes
-  
+  # Import and subset the data to 50 stores for demonstration purposes 
   input <- fread("C:\\Users\\jsalamy\\Desktop\\R_Projects\\Tournament_Refactoring\\Handoff\\train.csv")
   input <- input[, c(1,3,4)]
   input <- input[Store %in% unique(Store)[1:50]]
   
   # Format data
-  
   input[, Date := as.Date(Date)]
   setorder(input, Store, Date)
   input[, Sales := Sales + 1]
   
   # Define forecast horizon and validation window
-  
   forecast_period <- 28
   validation <- 14
   
@@ -27,7 +24,6 @@
   # Fill possible gaps in sales data with zero
   # Note: infill begins with first day of sales for each Store
   #       and ends with the end of the validation period
-  
   input <- input[, merge(.SD, 
                          data.table(Date = seq.Date(from = min(Date), 
                                                     to = valid_end, 
@@ -40,7 +36,6 @@
   # Detect and replace any possible peak anomalies using the AnomalyDetection package
   # Note: the maximum percentage of anomalies per time series is set to 5%
   #       the direction of possible anomalies is positive
-  
   Anomaly <- input[, AnomalyDetectionVec(Sales, 
                                          max_anoms = .05,
                                          direction = 'pos',
@@ -57,12 +52,10 @@
   input[, c(2:4)] <- NULL
   
   # Set aside store and date information
-  
   Date <- input[Date > valid_end, Date]
   Store <- input[Date > valid_end, Store]
   
   # Define different models 
-  
   models <- list(
     
     arima  = function(data, period) {arima_model <<- auto.arima(data, lambda = "auto")
@@ -79,7 +72,6 @@
   )
   
   # Function that finds  most accurate forecasting method over the validation window
-  
   Tournament <- function(input, models){
     
     Winner <- list('arima' = NA_real_,
@@ -118,7 +110,6 @@
   }
   
   # Run the Tournament function in parallel
-  
   cl <- makeCluster(detectCores() - 1)
   clusterExport(cl, varlist = list('valid_start','valid_end','validation','forecast_period','models', # forecasting inputs
                                    'Tournament','forecast','auto.arima','ses','dshw','tbats', # forecasting functions
@@ -128,14 +119,12 @@
   stopCluster(cl)
   
   # Finalize forecast results
-  
   input[Forecast < 1, Forecast := 1]
   input[, Forecast := Forecast - 1]
   input[['Date']] <- Date
   input[['Store']] <- Store
   
   # Remove everything but the input data.table and run garbage collection
-  
   rm(list = ls()[!ls() %in% 'input'])
   gc()
 }
