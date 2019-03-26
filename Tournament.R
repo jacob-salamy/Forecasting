@@ -36,7 +36,7 @@
   
   input[is.na(input)] <- 1
   
-  # Remove any possible peak anomalies using the AnomalyDetection package
+  # Detect and replace any possible peak anomalies using the AnomalyDetection package
   # Note: the maximum percentage of anomalies per time series is set to 5%
   #       the direction of possible anomalies is positive
   
