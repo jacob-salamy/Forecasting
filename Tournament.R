@@ -1,6 +1,5 @@
 # Tournament for Rossmann data #
 # Note: Double-Seasonal Holt-Winters is the optimal forecasting method for this dataset
-
 {
   #devtools::install_github("twitter/AnomalyDetection")
   xfun::pkg_attach2(c('forecast', 'data.table', 'parallel', 'AnomalyDetection'))
