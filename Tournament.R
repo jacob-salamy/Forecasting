@@ -8,7 +8,7 @@
   
   input <- fread("C:\\Users\\jsalamy\\Desktop\\R_Projects\\Tournament_Refactoring\\Handoff\\train.csv")
   input <- input[, c(1,3,4)]
-  input <- input[Store %in% unique(Store)[1:22]]
+  input <- input[Store %in% unique(Store)[1:50]]
   
   # Format data
   
