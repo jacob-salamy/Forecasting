@@ -2,11 +2,12 @@
 # Note: Double-Seasonal Holt-Winters is the optimal forecasting method for this dataset
 {
   #devtools::install_github("twitter/AnomalyDetection")
+  #install.packages('xfun')
   xfun::pkg_attach2(c('forecast', 'data.table', 'parallel', 'AnomalyDetection'))
   
   # Import and subset the data to 50 stores for demonstration purposes
   
-  input <- fread("C:\\Users\\jsalamy\\Desktop\\R_Projects\\Tournament_Refactoring\\Handoff\\train.csv")
+  input <- fread("~\train.csv")
   input <- input[, c(1,3,4)]
   input <- input[Store %in% unique(Store)[1:50]]
   
