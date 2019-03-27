@@ -27,7 +27,7 @@
   
   # Fill possible gaps in sales data with zero
   # Note: infill begins with first day of sales for each Store
-  #       and ends with the end of the validation period
+  #       and ends with the end of the forecast period
   
   input <- input[, merge(.SD,
                          data.table(Date = seq.Date(
