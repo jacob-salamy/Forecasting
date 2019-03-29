@@ -39,7 +39,7 @@
                          by = "Date",
                          all = T), by = Store]
   
-  input[is.na(input)] <- 1
+  input[is.na(Sales), Sales := 1]
   
   # Remove any possible peak anomalies using the AnomalyDetection package
   # Note: the maximum percentage of anomalies per time series is set to 5%
@@ -59,6 +59,7 @@
   input[, index := 1:.N, by = Store]
   input[Anomaly, Sales := i.expected_value, on = c('Store', 'index')]
   rm(Anomaly)
+  gc()
   
   # Set aside store and date information
   
