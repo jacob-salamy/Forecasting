@@ -57,7 +57,7 @@
                    by = Store][expected_value > 0]
   
   input[, index := 1:.N, by = Store]
-  input[Anomaly, Sales := i.expected_value, on = c('Store', 'index')]
+  input[Anomaly, Sales := i.expected_value, on = c('Store', 'index')][, index := NULL]
   rm(Anomaly)
   gc()
   
