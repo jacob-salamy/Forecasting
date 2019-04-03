@@ -67,7 +67,7 @@ rf_bayesopt <- function(mtry, node.size){
   model <- h2o.ls()
   removal <- as.character(model$key[!model$key %in% id$key])
   h2o.rm(removal)
-  gc(gc())
+  gc()
   
   # Return the score for the function to optimize
   list(Score = -1*log(Score), Pred = 1) }
