@@ -36,7 +36,7 @@
                            to = fcast_end,
                            by = 'day'
                          )),
-                         by = "Date",
+                         by = 'Date',
                          all = T), by = Store]
   
   input[is.na(Sales), Sales := 1]
@@ -57,9 +57,9 @@
                    by = Store][expected_value > 0]
   
   input[, index := 1:.N, by = Store]
-  input[Anomaly, Sales := i.expected_value, on = c('Store', 'index')][, index := NULL]
+  input[Anomaly, Sales := i.expected_value, on = c('Store', 'index')]
+  input[, index := NULL]
   rm(Anomaly)
-  gc()
   
   # Set aside store and date information
   
