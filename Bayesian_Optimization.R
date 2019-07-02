@@ -1,7 +1,7 @@
 # Bayesian Optimization of a Random Forest forecast using Rossmann data #
 { 
 options(scipen = 999)
-xfun::pkg_attach2(c('rBayesianOptimization','h2o','data.table','lubridate'))
+xfun::pkg_attach2(c('rBayesianOptimization','h2o','data.table','lubridate','purrr'))
  
 #Import and format data
 input <- fread("~/train.csv")
@@ -19,10 +19,8 @@ date_features <- list(
   month = function(x) month(x),
   week = function(x) week(x),
   weekday = function(x) weekdays(x, abbreviate = T))
-
-for (i in seq_along(date_features)) {
-input[, (names(date_features[i])) := mean(Sales), by = .(Store, date_features[[i]](Date))]
-}
+ 
+iwalk(date_features, ~ input[, names(date_features) := mean(Sales, na.rm = T), by = .(Store, .x(Date))])
 
 # Create a holdout sample for time series validation
 holdout <- input[Date >= max(Date) - 60,]
