@@ -14,10 +14,10 @@ lag_list <- paste("lag", lags)
 input[, (lag_list) := shift(Sales, lags, NA, 'lag'), by = Store]
 
 # Target encode date features using a list of date-feature extraction functions
-date_features <- list(quarter,
-                      months,
-                      weeks,
-                      weekdays)
+date_features <- list(qtr = quarter,
+                      mo = months,
+                      wk = weeks,
+                      wkday = weekdays)
  
 iwalk(date_features, ~ input[, names(date_features) := mean(Sales, na.rm = T), by = .(Store, .x(Date))])
 
